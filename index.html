@@ -1,77 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Formulario a Google Sheets</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
-      font-family: sans-serif;
-      max-width: 400px;
-      margin: auto;
-      padding-top: 40px;
+      background-color: #f9f9f9;
     }
-    label, input {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px;
-      border: none;
-      width: 100%;
-      cursor: pointer;
-    }
-    .mensaje {
-      margin-top: 15px;
-      font-weight: bold;
+    .form-container {
+      max-width: 450px;
+      margin: 60px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
 
-  <h2>Registro</h2>
-  <form id="formulario">
-    <label>Nombre:</label>
-    <input type="text" id="nombre" required>
-    <label>Correo:</label>
-    <input type="email" id="correo" required>
-    <button type="submit">Enviar</button>
-  </form>
-  <div class="mensaje" id="mensaje"></div>
+  <div class="form-container">
+    <h4 class="text-center mb-4">Formulario de Registro</h4>
+    <form id="miFormulario">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" name="nombre" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" name="correo" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Enviar</button>
+    </form>
+  </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwmZgKFnSmKTOi7WeKA2DMOPibv5Re8Zd3xInv-qPbFP0VrkMUymvuHTyoV6vpWfXPY/exec";
+    const scriptURL = 'TU_LINK_EXEC_DEL_SCRIPT_AQUÍ'; // 👈 Reemplaza con tu URL final del Web App
+    const form = document.getElementById('miFormulario');
 
-    document.getElementById("formulario").addEventListener("submit", function(e) {
+    form.addEventListener('submit', e => {
       e.preventDefault();
 
-      const nombre = document.getElementById("nombre").value;
-      const correo = document.getElementById("correo").value;
+      const formData = new FormData(form);
 
-      fetch(scriptURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, correo })
-      })
-      .then(res => res.text())
-      .then(text => {
-        if (text.includes("ok")) {
-          document.getElementById("mensaje").textContent = "✅ Enviado correctamente";
-          document.getElementById("mensaje").style.color = "green";
-          document.getElementById("formulario").reset();
-        } else {
-          document.getElementById("mensaje").textContent = "❌ Error en el servidor";
-          document.getElementById("mensaje").style.color = "red";
-        }
-      })
-      .catch(err => {
-        document.getElementById("mensaje").textContent = "❌ Error de red o CORS";
-        document.getElementById("mensaje").style.color = "red";
-        console.error(err);
-      });
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => {
+          Swal.fire('¡Enviado!', 'Datos guardados correctamente.', 'success');
+          form.reset();
+        })
+        .catch(error => {
+          Swal.fire('Error', 'No se pudo enviar. Verifica el link o permisos.', 'error');
+          console.error('Error!', error.message);
+        });
     });
   </script>
+
 </body>
 </html>
