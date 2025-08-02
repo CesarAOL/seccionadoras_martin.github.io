@@ -56,11 +56,11 @@
 
     .modal-content {
       background-color: #fff;
-      margin: 10% auto;
+      margin: 4% auto;
       padding: 2rem;
       border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
+      width: 95%;
+      max-width: 600px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       position: relative;
     }
@@ -96,24 +96,29 @@
 
   <header>
     <div class="dashboard-title">Mi Dashboard</div>
-    <button class="btn" onclick="abrirModal()">Registrar Máquina 💻</button>
+    <button class="btn" onclick="abrirModal()">Registrar Seccionadora 🛠️</button>
   </header>
 
   <div class="content">
-    <p>Bienvenido al panel de control. Aquí puedes gestionar tus registros.</p>
-    <!-- Aquí puedes agregar otras tarjetas o módulos -->
+    <p>Bienvenido al panel de control. Aquí puedes gestionar los datos de tus seccionadoras.</p>
   </div>
 
   <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="cerrarModal()">&times;</span>
-      <h2>Registrar Computadora</h2>
+      <h2>Registrar Seccionadora</h2>
+      <input type="text" id="sede" placeholder="Sede">
+      <input type="text" id="ubicacion" placeholder="Ubicación">
+      <input type="text" id="maquina" placeholder="Máquina">
+      <input type="text" id="marca" placeholder="Marca">
+      <input type="text" id="modelo" placeholder="Modelo">
+      <input type="text" id="serie" placeholder="Serie">
       <input type="text" id="nombrePC" placeholder="Nombre de la computadora">
       <input type="text" id="sistemaOperativo" placeholder="Sistema Operativo">
       <input type="text" id="procesador" placeholder="Procesador">
-      <input type="text" id="ram" placeholder="RAM instalada">
-      <button class="btn" onclick="registrarMaquina()">Guardar</button>
+      <input type="text" id="ram" placeholder="RAM">
+      <button class="btn" onclick="registrarSeccionadora()">Guardar</button>
     </div>
   </div>
 
@@ -126,26 +131,34 @@
       document.getElementById("modal").style.display = "none";
     }
 
-    function registrarMaquina() {
-      const nombre = document.getElementById("nombrePC").value;
-      const so = document.getElementById("sistemaOperativo").value;
-      const cpu = document.getElementById("procesador").value;
-      const ram = document.getElementById("ram").value;
+    function registrarSeccionadora() {
+      const datos = {
+        sede: document.getElementById("sede").value,
+        ubicacion: document.getElementById("ubicacion").value,
+        maquina: document.getElementById("maquina").value,
+        marca: document.getElementById("marca").value,
+        modelo: document.getElementById("modelo").value,
+        serie: document.getElementById("serie").value,
+        nombrePC: document.getElementById("nombrePC").value,
+        so: document.getElementById("sistemaOperativo").value,
+        procesador: document.getElementById("procesador").value,
+        ram: document.getElementById("ram").value,
+      };
 
-      if (!nombre || !so || !cpu || !ram) {
-        alert("Completa todos los campos.");
-        return;
+      // Validación rápida
+      for (let key in datos) {
+        if (!datos[key]) {
+          alert("Completa todos los campos.");
+          return;
+        }
       }
 
-      // Aquí podrías enviar a una base de datos, Google Sheets, etc.
-      console.log("Registrado:", { nombre, so, cpu, ram });
+      console.log("Seccionadora registrada:", datos);
+      alert("✅ Seccionadora registrada correctamente.");
 
-      alert("✅ Máquina registrada correctamente.");
       cerrarModal();
-      document.getElementById("nombrePC").value = "";
-      document.getElementById("sistemaOperativo").value = "";
-      document.getElementById("procesador").value = "";
-      document.getElementById("ram").value = "";
+      // Limpiar campos
+      Object.keys(datos).forEach(id => document.getElementById(id).value = "");
     }
 
     window.onclick = function(event) {
