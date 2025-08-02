@@ -42,7 +42,7 @@
   <div class="mensaje" id="mensaje"></div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbykU7Bn-Z6Z1deOqKH6FomPaTQfkEyiC_IF2SJ20T5tZWQ2iz91TZB_wDQPQp1LTWmV/exec";
+    const scriptURL = "AQUÍ_TU_URL_DEL_SCRIPT_EXEC";
 
     document.getElementById("formulario").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -52,27 +52,24 @@
 
       fetch(scriptURL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, correo })
       })
       .then(res => res.text())
       .then(text => {
-        console.log("Respuesta del servidor:", text);
         if (text.includes("ok")) {
           document.getElementById("mensaje").textContent = "✅ Enviado correctamente";
           document.getElementById("mensaje").style.color = "green";
           document.getElementById("formulario").reset();
         } else {
-          document.getElementById("mensaje").textContent = "❌ Error al enviar";
+          document.getElementById("mensaje").textContent = "❌ Error en el servidor";
           document.getElementById("mensaje").style.color = "red";
         }
       })
       .catch(err => {
         document.getElementById("mensaje").textContent = "❌ Error de red o CORS";
         document.getElementById("mensaje").style.color = "red";
-        console.error("Error:", err);
+        console.error(err);
       });
     });
   </script>
