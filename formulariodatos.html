@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard Profesional</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -45,6 +44,7 @@
       background-color: #2980b9;
     }
 
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -67,7 +67,6 @@
 
     .modal-content h2 {
       margin-top: 0;
-      margin-bottom: 1rem;
     }
 
     .modal-content input {
@@ -91,65 +90,111 @@
     .close-btn:hover {
       color: #000;
     }
+
+    .success-message {
+      color: green;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="dashboard-title">Mi Dashboard</div>
-    <button class="btn" onclick="abrirModal()">Registrar Seccionadora 🛠️</button>
+    <button class="btn" onclick="abrirModal()">Registrar Seccionadora 🖥️</button>
   </header>
 
   <div class="content">
-    <p>Bienvenido al panel de control. Aquí puedes registrar tus máquinas seccionadoras.</p>
+    <p>Bienvenido al panel de control. Aquí puedes gestionar tus registros.</p>
+    <!-- Aquí puedes agregar tarjetas, gráficos, tablas, etc. -->
   </div>
 
-  <!-- Modal -->
-<form id="form-seccionadora">
-  <input type="text" id="sede" placeholder="Sede" required>
-  <input type="text" id="ubicacion" placeholder="Ubicación" required>
-  <input type="text" id="maquina" placeholder="Máquina" required>
-  <input type="text" id="marca" placeholder="Marca" required>
-  <input type="text" id="modelo" placeholder="Modelo" required>
-  <input type="text" id="serie" placeholder="Serie" required>
-  <input type="text" id="nombrePC" placeholder="Nombre de la computadora" required>
-  <input type="text" id="so" placeholder="Sistema Operativo" required>
-  <input type="text" id="procesador" placeholder="Procesador" required>
-  <input type="text" id="ram" placeholder="RAM" required>
-  <button type="submit" class="btn">Guardar</button>
-</form>
+  <!-- Modal de Registro -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="cerrarModal()">&times;</span>
+      <h2>Registrar Seccionadora</h2>
 
-<script>
-  const formSec = document.getElementById("form-seccionadora");
-  formSec.addEventListener("submit", function(e) {
-    e.preventDefault();
+      <input type="text" id="sede" placeholder="Sede">
+      <input type="text" id="ubicacion" placeholder="Ubicación">
+      <input type="text" id="maquina" placeholder="Máquina">
+      <input type="text" id="marca" placeholder="Marca">
+      <input type="text" id="modelo" placeholder="Modelo">
+      <input type="text" id="serie" placeholder="Serie">
+      <input type="text" id="nombrePC" placeholder="Nombre de la computadora">
+      <input type="text" id="sistemaOperativo" placeholder="Sistema Operativo">
+      <input type="text" id="procesador" placeholder="Procesador">
+      <input type="text" id="ram" placeholder="RAM instalada">
+      
+      <button class="btn" onclick="registrarSeccionadora()">Guardar</button>
+      <div class="success-message" id="mensajeRegistro"></div>
+    </div>
+  </div>
 
-    const formData = new FormData();
-    formData.append("tipo", "registro");
-    formData.append("sede", document.getElementById("sede").value);
-    formData.append("ubicacion", document.getElementById("ubicacion").value);
-    formData.append("maquina", document.getElementById("maquina").value);
-    formData.append("marca", document.getElementById("marca").value);
-    formData.append("modelo", document.getElementById("modelo").value);
-    formData.append("serie", document.getElementById("serie").value);
-    formData.append("nombrePC", document.getElementById("nombrePC").value);
-    formData.append("so", document.getElementById("so").value);
-    formData.append("procesador", document.getElementById("procesador").value);
-    formData.append("ram", document.getElementById("ram").value);
+  <script>
+    function abrirModal() {
+      document.getElementById("modal").style.display = "block";
+    }
 
-    fetch("https://script.google.com/macros/s/AKfycbxdSBSo0-H-wsZY6EtPSLwAFIztXaN_wPCRQXr5c6kcx0Mx1pcjNJlnqALsFdGspFwt/exec", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.text())
-    .then(res => {
-      if (res.trim() === "registro_ok") {
-        alert("✅ Seccionadora registrada con éxito");
-        formSec.reset();
-      } else {
-        alert("❌ Error al registrar");
+    function cerrarModal() {
+      document.getElementById("modal").style.display = "none";
+      document.getElementById("mensajeRegistro").textContent = "";
+    }
+
+    function registrarSeccionadora() {
+      const datos = {
+        tipo: "registro",
+        sede: document.getElementById("sede").value,
+        ubicacion: document.getElementById("ubicacion").value,
+        maquina: document.getElementById("maquina").value,
+        marca: document.getElementById("marca").value,
+        modelo: document.getElementById("modelo").value,
+        serie: document.getElementById("serie").value,
+        nombrePC: document.getElementById("nombrePC").value,
+        sistemaOperativo: document.getElementById("sistemaOperativo").value,
+        procesador: document.getElementById("procesador").value,
+        ram: document.getElementById("ram").value,
+      };
+
+      // Validación simple
+      for (let campo in datos) {
+        if (!datos[campo]) {
+          alert("Por favor completa todos los campos.");
+          return;
+        }
       }
-    });
-  });
-</script>
 
+      const formData = new FormData();
+      for (let campo in datos) {
+        formData.append(campo, datos[campo]);
+      }
+
+      fetch("https://script.google.com/macros/s/AKfycbxdSBSo0-H-wsZY6EtPSLwAFIztXaN_wPCRQXr5c6kcx0Mx1pcjNJlnqALsFdGspFwt/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(res => {
+        if (res.trim() === "registro_ok") {
+          document.getElementById("mensajeRegistro").textContent = "✅ Registrado con éxito.";
+          // Limpiar campos
+          document.querySelectorAll('.modal-content input').forEach(input => input.value = "");
+        } else {
+          document.getElementById("mensajeRegistro").textContent = "❌ Error al registrar.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("mensajeRegistro").textContent = "⚠️ Error de conexión.";
+      });
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("modal");
+      if (event.target == modal) cerrarModal();
+    };
+  </script>
+
+</body>
+</html>
