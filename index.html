@@ -1,37 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
+  <meta charset="UTF-8">
+  <title>Formulario a Google Sheets</title>
   <style>
-    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; font-family: Arial, sans-serif; }
-    .login-container { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
-    .login-container h2 { text-align: center; margin-bottom: 20px; }
-    .login-container input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-    .login-container button { width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-    .login-container button:hover { background: #0056b3; }
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: auto;
+      padding-top: 40px;
+    }
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+    }
+    .mensaje {
+      margin-top: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Iniciar Sesión</h2>
-    <input type="text" id="username" placeholder="Usuario" />
-    <input type="password" id="password" placeholder="Contraseña" />
-    <button onclick="login()">Ingresar</button>
-    <p id="message" style="color: red; text-align: center;"></p>
-  </div>
+
+  <h2>Registro</h2>
+  <form id="formulario">
+    <label>Nombre:</label>
+    <input type="text" id="nombre" required>
+    <label>Correo:</label>
+    <input type="email" id="correo" required>
+    <button type="submit">Enviar</button>
+  </form>
+  <div class="mensaje" id="mensaje"></div>
 
   <script>
-    function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      if (username === 'cesar.osco' && password === 'cesar+') {
-        document.body.innerHTML = `REPLACE_WITH_FORM`;
-      } else {
-        document.getElementById('message').innerText = 'Credenciales incorrectas';
-      }
-    }
+    document.getElementById("formulario").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+
+      fetch("https://script.google.com/macros/s/AKfycbykU7Bn-Z6Z1deOqKH6FomPaTQfkEyiC_IF2SJ20T5tZWQ2iz91TZB_wDQPQp1LTWmV/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nombre, correo })
+      })
+      .then(res => res.text())
+      .then(text => {
+        console.log("Respuesta del servidor:", text);
+        if (text.includes("ok")) {
+          document.getElementById("mensaje").textContent = "✅ Enviado correctamente";
+          document.getElementById("mensaje").style.color = "green";
+          document.getElementById("formulario").reset();
+        } else {
+          document.getElementById("mensaje").textContent = "❌ Error al enviar";
+          document.getElementById("mensaje").style.color = "red";
+        }
+      })
+      .catch(err => {
+        document.getElementById("mensaje").textContent = "❌ Error de red o CORS";
+        document.getElementById("mensaje").style.color = "red";
+        console.error("Error:", err);
+      });
+    });
   </script>
 </body>
 </html>
