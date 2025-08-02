@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard Profesional</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -44,7 +45,6 @@
       background-color: #2980b9;
     }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -56,10 +56,10 @@
 
     .modal-content {
       background-color: #fff;
-      margin: 4% auto;
+      margin: 5% auto;
       padding: 2rem;
       border-radius: 8px;
-      width: 95%;
+      width: 90%;
       max-width: 600px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       position: relative;
@@ -67,6 +67,7 @@
 
     .modal-content h2 {
       margin-top: 0;
+      margin-bottom: 1rem;
     }
 
     .modal-content input {
@@ -100,7 +101,7 @@
   </header>
 
   <div class="content">
-    <p>Bienvenido al panel de control. Aquí puedes gestionar los datos de tus seccionadoras.</p>
+    <p>Bienvenido al panel de control. Aquí puedes registrar tus máquinas seccionadoras.</p>
   </div>
 
   <!-- Modal -->
@@ -114,8 +115,8 @@
       <input type="text" id="marca" placeholder="Marca">
       <input type="text" id="modelo" placeholder="Modelo">
       <input type="text" id="serie" placeholder="Serie">
-      <input type="text" id="nombrePC" placeholder="Nombre de la computadora">
-      <input type="text" id="sistemaOperativo" placeholder="Sistema Operativo">
+      <input type="text" id="nombrePC" placeholder="Nombre de la Computadora">
+      <input type="text" id="so" placeholder="Sistema Operativo">
       <input type="text" id="procesador" placeholder="Procesador">
       <input type="text" id="ram" placeholder="RAM">
       <button class="btn" onclick="registrarSeccionadora()">Guardar</button>
@@ -123,6 +124,8 @@
   </div>
 
   <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxdSBSo0-H-wsZY6EtPSLwAFIztXaN_wPCRQXr5c6kcx0Mx1pcjNJlnqALsFdGspFwt/exec";
+
     function abrirModal() {
       document.getElementById("modal").style.display = "block";
     }
@@ -140,31 +143,40 @@
         modelo: document.getElementById("modelo").value,
         serie: document.getElementById("serie").value,
         nombrePC: document.getElementById("nombrePC").value,
-        so: document.getElementById("sistemaOperativo").value,
+        so: document.getElementById("so").value,
         procesador: document.getElementById("procesador").value,
         ram: document.getElementById("ram").value,
       };
 
-      // Validación rápida
-      for (let key in datos) {
-        if (!datos[key]) {
-          alert("Completa todos los campos.");
+      // Validar campos vacíos
+      for (const campo in datos) {
+        if (!datos[campo]) {
+          Swal.fire("Campo vacío", `Completa el campo: ${campo}`, "warning");
           return;
         }
       }
 
-      console.log("Seccionadora registrada:", datos);
-      alert("✅ Seccionadora registrada correctamente.");
+      // Preparar envío
+      const formData = new FormData();
+      for (const key in datos) {
+        formData.append(key, datos[key]);
+      }
 
-      cerrarModal();
-      // Limpiar campos
-      Object.keys(datos).forEach(id => document.getElementById(id).value = "");
+      fetch(scriptURL, { method: "POST", body: formData })
+        .then(response => {
+          Swal.fire("Éxito", "Seccionadora registrada correctamente ✅", "success");
+          cerrarModal();
+          document.querySelectorAll("input").forEach(input => input.value = "");
+        })
+        .catch(error => {
+          Swal.fire("Error", "Hubo un problema al registrar", "error");
+          console.error("Error!", error.message);
+        });
     }
 
     window.onclick = function(event) {
-      const modal = document.getElementById("modal");
-      if (event.target == modal) cerrarModal();
-    }
+      if (event.target == document.getElementById("modal")) cerrarModal();
+    };
   </script>
 </body>
 </html>
