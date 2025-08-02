@@ -71,24 +71,25 @@
         formData.append("usuario", usuario);
         formData.append("clave", clave);
 
-        fetch(scriptURL, {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.text())
-          .then((respuesta) => {
-            if (respuesta.trim() === "ok") {
-              Swal.fire("¡Éxito!", "Inicio de sesión correcto", "success");
-              // Puedes redirigir a otra página:
-              // window.location.href = "dashboard.html";
-            } else {
-              Swal.fire("Error", "Usuario o clave incorrecta", "error");
-            }
-          })
-          .catch((error) => {
-            Swal.fire("Error", "No se pudo conectar con el servidor", "error");
-            console.error("Error:", error);
-          });
+fetch(scriptURL, {
+  method: "POST",
+  body: formData
+})
+.then(response => response.text())
+.then(result => {
+  if (result === "ok") {
+    Swal.fire("Bienvenido", "Inicio de sesión correcto", "success").then(() => {
+      // 👉 Redirige a dashboard.html
+      window.location.href = "dashboard.html";
+    });
+  } else {
+    Swal.fire("Error", "Usuario o clave incorrecta", "error");
+  }
+})
+.catch(error => {
+  Swal.fire("Error", "Error de red o servidor", "error");
+});
+
       });
     </script>
   </body>
