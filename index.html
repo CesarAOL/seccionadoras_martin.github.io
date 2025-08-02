@@ -42,13 +42,15 @@
   <div class="mensaje" id="mensaje"></div>
 
   <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbykU7Bn-Z6Z1deOqKH6FomPaTQfkEyiC_IF2SJ20T5tZWQ2iz91TZB_wDQPQp1LTWmV/exec";
+
     document.getElementById("formulario").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const nombre = document.getElementById("nombre").value;
       const correo = document.getElementById("correo").value;
 
-      fetch("https://script.google.com/macros/s/AKfycbykU7Bn-Z6Z1deOqKH6FomPaTQfkEyiC_IF2SJ20T5tZWQ2iz91TZB_wDQPQp1LTWmV/exec", {
+      fetch(scriptURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
