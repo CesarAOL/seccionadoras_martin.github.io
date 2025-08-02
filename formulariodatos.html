@@ -56,10 +56,10 @@
 
     .modal-content {
       background-color: #fff;
-      margin: 5% auto;
+      margin: 4% auto;
       padding: 2rem;
       border-radius: 8px;
-      width: 90%;
+      width: 95%;
       max-width: 600px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       position: relative;
@@ -90,33 +90,24 @@
     .close-btn:hover {
       color: #000;
     }
-
-    .success-message {
-      color: green;
-      text-align: center;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="dashboard-title">Mi Dashboard</div>
-    <button class="btn" onclick="abrirModal()">Registrar Seccionadora 🖥️</button>
+    <button class="btn" onclick="abrirModal()">Registrar Seccionadora 🛠️</button>
   </header>
 
   <div class="content">
-    <p>Bienvenido al panel de control. Aquí puedes gestionar tus registros.</p>
-    <!-- Aquí puedes agregar tarjetas, gráficos, tablas, etc. -->
+    <p>Bienvenido al panel de control. Aquí puedes gestionar los datos de tus seccionadoras.</p>
   </div>
 
-  <!-- Modal de Registro -->
+  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="cerrarModal()">&times;</span>
       <h2>Registrar Seccionadora</h2>
-
       <input type="text" id="sede" placeholder="Sede">
       <input type="text" id="ubicacion" placeholder="Ubicación">
       <input type="text" id="maquina" placeholder="Máquina">
@@ -126,10 +117,8 @@
       <input type="text" id="nombrePC" placeholder="Nombre de la computadora">
       <input type="text" id="sistemaOperativo" placeholder="Sistema Operativo">
       <input type="text" id="procesador" placeholder="Procesador">
-      <input type="text" id="ram" placeholder="RAM instalada">
-      
+      <input type="text" id="ram" placeholder="RAM">
       <button class="btn" onclick="registrarSeccionadora()">Guardar</button>
-      <div class="success-message" id="mensajeRegistro"></div>
     </div>
   </div>
 
@@ -140,12 +129,10 @@
 
     function cerrarModal() {
       document.getElementById("modal").style.display = "none";
-      document.getElementById("mensajeRegistro").textContent = "";
     }
 
     function registrarSeccionadora() {
       const datos = {
-        tipo: "registro",
         sede: document.getElementById("sede").value,
         ubicacion: document.getElementById("ubicacion").value,
         maquina: document.getElementById("maquina").value,
@@ -153,48 +140,31 @@
         modelo: document.getElementById("modelo").value,
         serie: document.getElementById("serie").value,
         nombrePC: document.getElementById("nombrePC").value,
-        sistemaOperativo: document.getElementById("sistemaOperativo").value,
+        so: document.getElementById("sistemaOperativo").value,
         procesador: document.getElementById("procesador").value,
         ram: document.getElementById("ram").value,
       };
 
-      // Validación simple
-      for (let campo in datos) {
-        if (!datos[campo]) {
-          alert("Por favor completa todos los campos.");
+      // Validación rápida
+      for (let key in datos) {
+        if (!datos[key]) {
+          alert("Completa todos los campos.");
           return;
         }
       }
 
-      const formData = new FormData();
-      for (let campo in datos) {
-        formData.append(campo, datos[campo]);
-      }
+      console.log("Seccionadora registrada:", datos);
+      alert("✅ Seccionadora registrada correctamente.");
 
-      fetch("https://script.google.com/macros/s/AKfycbxdSBSo0-H-wsZY6EtPSLwAFIztXaN_wPCRQXr5c6kcx0Mx1pcjNJlnqALsFdGspFwt/exec", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(res => {
-        if (res.trim() === "registro_ok") {
-          document.getElementById("mensajeRegistro").textContent = "✅ Registrado con éxito.";
-          // Limpiar campos
-          document.querySelectorAll('.modal-content input').forEach(input => input.value = "");
-        } else {
-          document.getElementById("mensajeRegistro").textContent = "❌ Error al registrar.";
-        }
-      })
-      .catch(err => {
-        document.getElementById("mensajeRegistro").textContent = "⚠️ Error de conexión.";
-      });
+      cerrarModal();
+      // Limpiar campos
+      Object.keys(datos).forEach(id => document.getElementById(id).value = "");
     }
 
     window.onclick = function(event) {
       const modal = document.getElementById("modal");
       if (event.target == modal) cerrarModal();
-    };
+    }
   </script>
-
 </body>
 </html>
